@@ -67,9 +67,17 @@ defmodule Jido.Browser.Plugin.Profile do
       alias Jido.Browser.Plugin.Profile, as: ProfileContract
 
       use Jido.Plugin,
-        agent: Jido.Browser.Plugin.Agent,
         vsn: 3,
         option_keys: [agent: [:headless, :timeout, :adapter, :pool, :checkout_timeout, :viewport, :base_url]]
+
+      @impl Jido.Plugin
+      defdelegate state_spec(opts), to: Jido.Browser.Plugin.Agent
+
+      @impl Jido.Plugin
+      defdelegate prepare(preparation, opts), to: Jido.Browser.Plugin.Agent
+
+      @impl Jido.Plugin
+      defdelegate reduce(reduction, opts), to: Jido.Browser.Plugin.Agent
 
       @doc false
       def name, do: "browser"

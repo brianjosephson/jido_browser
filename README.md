@@ -30,9 +30,12 @@ removal notices.
 
 The Hex package and OTP app remain `jido_browser`, while the public Elixir namespace is `Jido.Browser.*`.
 
-This `release/v3` branch contains V3. It uses published Jido and Jido Action
-V3 packages, with Zoi pinned to `0.18.8` for their schema contract. It does not
-select sibling paths automatically. The `main` branch contains V2.
+This compatibility candidate targets the unified V3 `Jido.Plugin` callbacks.
+Its manifest pins official Jido, Action, Signal and Zoi revisions that implement
+that contract; it does not select sibling paths. Published V3 betas and the
+current official `release/v3` branch do not yet contain this complete cohort.
+The candidate is not published, and the baseline installation below must not be
+mistaken for a source of these compatibility changes. The `main` branch contains V2.
 
 Jido Browser `3.0.0-beta.1` is prepared but is not published to Hex. See the
 [migration guide](guides/migration_3_0.md) for the dependency set and breaking
@@ -513,8 +516,8 @@ defmodule MyBrowsingAgent do
 end
 ```
 
-`Jido.Browser.Plugin` uses its Agent facet to initialize `agent.state.browser`
-from the plugin configuration. It exposes the core static tool profile
+`Jido.Browser.Plugin` declares and commits `agent.state.browser` through the
+native Plugin `state_spec/1`, `prepare/2`, and `reduce/2` callbacks. It exposes the core static tool profile
 through `actions/0`, `signal_routes/0`, and `signal_patterns/0`. Integrations use
 these functions to select 20 actions for navigation, interaction, waits, page
 reading, screenshots, web fetches, and session close operations. Use

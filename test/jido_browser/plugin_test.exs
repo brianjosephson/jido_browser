@@ -173,7 +173,7 @@ defmodule Jido.Browser.PluginTest do
     assert All.actions() == all_actions
   end
 
-  test "initializes browser-owned state through the published V3 Agent facet" do
+  test "initializes browser-owned state through native V3 Plugin callbacks" do
     for module <- [DefaultProfileAgent, DebugProfileAgent, AllProfileAgent] do
       {:ok, agent} = Jido.Agent.instantiate(module)
       assert agent.state.browser.headless
@@ -181,9 +181,10 @@ defmodule Jido.Browser.PluginTest do
       assert agent.state.browser.seen_urls == []
       assert agent.state.browser.web_fetch_uses == 0
 
-      {:ok, [spec]} = Jido.Plugin.normalize_all(agent.plugins)
-      assert spec.manifest.agent == Jido.Browser.Plugin.Agent
-      assert spec.state_key == :browser
+      [{plugin, opts}] = agent.plugins
+      assert {:ok, manifest} = Jido.Plugin.manifest({plugin, opts})
+      assert manifest.agent == plugin
+      assert {:browser, _schema} = plugin.state_spec(opts)
     end
 
     {:ok, agent} = Jido.Agent.instantiate(ConfiguredProfileAgent)
